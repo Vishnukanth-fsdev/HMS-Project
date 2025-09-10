@@ -18,7 +18,6 @@ import com.authservice.service.CustomerUserDetailsService;
 @Configuration
 @EnableWebSecurity
 public class AppSecurityConfig {
-
 	@Autowired
 	private CustomerUserDetailsService customerUserDetailsService;
 	String[] publicEndpoints = { "/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/update-password",
@@ -46,8 +45,11 @@ public class AppSecurityConfig {
 	public SecurityFilterChain securityConfig(HttpSecurity http) throws Exception {
 
 		http.authorizeHttpRequests(req -> {
-			req.requestMatchers(publicEndpoints).permitAll().anyRequest().authenticated();
-		});
+			req.requestMatchers(publicEndpoints).permitAll()
+
+					.requestMatchers("/api/v1/admin/welcome").hasRole("ADMIN").anyRequest().authenticated();
+		}).httpBasic();
+
 		return http.csrf().disable().build();
 	}
 }
